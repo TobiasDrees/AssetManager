@@ -11,8 +11,8 @@
 
 namespace AssetManager\Asset;
 
-use Assetic\Filter\FilterInterface;
-use Assetic\Util\VarUtils;
+use AssetManager\Filter\FilterInterface;
+use AssetManager\Util\VarUtils;
 
 /**
  * Represents an asset loaded from a file.
