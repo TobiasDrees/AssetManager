@@ -2,7 +2,6 @@
 
 namespace AssetManager\Cache;
 
-use Assetic\Cache\CacheInterface;
 use AssetManager\Exception\RuntimeException;
 use Laminas\Stdlib\ErrorHandler;
 
