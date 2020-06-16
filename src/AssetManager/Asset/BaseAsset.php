@@ -11,7 +11,7 @@
 
 namespace AssetManager\Asset;
 
-use Assetic\Filter\FilterCollection;
+use AssetManager\Filter\FilterCollection;
 use AssetManager\Filter\FilterInterface;
 
 /**
