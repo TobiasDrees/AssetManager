@@ -2,8 +2,8 @@
 
 namespace AssetManager\Resolver;
 
-use Assetic\Asset\AssetCollection;
-use Assetic\Asset\AssetInterface;
+use AssetManager\Asset\AssetCollection;
+use AssetManager\Asset\AssetInterface;
 use AssetManager\Exception;
 use AssetManager\Service\AssetFilterManager;
 use AssetManager\Service\AssetFilterManagerAwareInterface;
@@ -134,7 +134,7 @@ class CollectionResolver implements
 
             if (!$res instanceof AssetInterface) {
                 throw new Exception\RuntimeException(
-                    "Asset '$asset' does not implement Assetic\\Asset\\AssetInterface."
+                    "Asset '$asset' does not implement AssetManager\\Asset\\AssetInterface."
                 );
             }
 

@@ -2,11 +2,11 @@
 
 namespace AssetManagerTest\Service;
 
-use Assetic\Asset\AssetCache;
-use Assetic\Asset\FileAsset;
-use Assetic\Cache\ApcCache;
-use Assetic\Cache\CacheInterface;
-use Assetic\Cache\FilesystemCache;
+use AssetManager\Asset\AssetCache;
+use AssetManager\Asset\FileAsset;
+use AssetManager\Cache\ApcCache;
+use AssetManager\Cache\CacheInterface;
+use AssetManager\Cache\FilesystemCache;
 use AssetManager\Cache\FilePathCache;
 use AssetManager\Service\AssetCacheManager;
 use PHPUnit\Framework\TestCase;

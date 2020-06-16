@@ -2,7 +2,7 @@
 
 namespace AssetManagerTest\Service;
 
-use Assetic\Asset;
+use AssetManager\Asset;
 use AssetManager\Cache\FilePathCache;
 use AssetManager\Resolver\AggregateResolver;
 use AssetManager\Resolver\CollectionResolver;

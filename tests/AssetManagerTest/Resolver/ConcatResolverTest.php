@@ -2,7 +2,7 @@
 
 namespace AssetManagerTest\Service;
 
-use Assetic\Asset;
+use AssetManager\Asset;
 use AssetManager\Asset\AggregateAsset;
 use AssetManager\Resolver\AggregateResolverAwareInterface;
 use AssetManager\Resolver\ConcatResolver;
@@ -147,7 +147,7 @@ class ConcatResolverTest extends TestCase
         );
 
         $callback = function ($file) {
-            $asset = new \Assetic\Asset\FileAsset(
+            $asset = new \AssetManager\Asset\FileAsset(
                 $file
             );
 

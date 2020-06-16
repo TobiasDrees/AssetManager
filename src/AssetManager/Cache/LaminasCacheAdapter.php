@@ -2,12 +2,8 @@
 
 namespace AssetManager\Cache;
 
-use Assetic\Cache\CacheInterface;
 use Laminas\Cache\Storage\StorageInterface;
 
-/**
- * Laminas Cache Storage Adapter for Assetic
- */
 class LaminasCacheAdapter implements CacheInterface
 {
 

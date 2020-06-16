@@ -2,8 +2,8 @@
 
 namespace AssetManager\Service;
 
-use Assetic\Asset\AssetInterface;
-use Assetic\Filter\FilterInterface;
+use AssetManager\Asset\AssetInterface;
+use AssetManager\Filter\FilterInterface;
 use AssetManager\Exception;
 use AssetManager\Resolver\MimeResolverAwareInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -138,9 +138,9 @@ class AssetFilterManager implements MimeResolverAwareInterface
 
         $filterClass = $filter;
 
-        if (!is_subclass_of($filterClass, 'Assetic\Filter\FilterInterface', true)) {
+        if (!is_subclass_of($filterClass, 'AssetManager\Filter\FilterInterface', true)) {
             $filterClass .= (substr($filterClass, -6) === 'Filter') ? '' : 'Filter';
-            $filterClass  = 'Assetic\Filter\\' . $filterClass;
+            $filterClass  = 'AssetManager\Filter\\' . $filterClass;
         }
 
         if (!class_exists($filterClass)) {

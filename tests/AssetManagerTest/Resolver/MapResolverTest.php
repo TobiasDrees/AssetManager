@@ -2,7 +2,7 @@
 
 namespace AssetManagerTest\Service;
 
-use Assetic\Asset;
+use AssetManager\Asset;
 use AssetManager\Resolver\MapResolver;
 use AssetManager\Resolver\MimeResolverAwareInterface;
 use AssetManager\Service\MimeResolver;

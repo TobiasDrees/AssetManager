@@ -3,8 +3,8 @@
 namespace AssetManager\Resolver;
 
 use ArrayAccess;
-use Assetic\Asset\FileAsset;
-use Assetic\Factory\Resource\DirectoryResource;
+use AssetManager\Asset\FileAsset;
+use AssetManager\Factory\Resource\DirectoryResource;
 use AssetManager\Exception;
 use AssetManager\Service\MimeResolver;
 use SplFileInfo;

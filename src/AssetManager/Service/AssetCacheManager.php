@@ -2,9 +2,9 @@
 
 namespace AssetManager\Service;
 
-use Assetic\Asset\AssetCache;
-use Assetic\Asset\AssetInterface;
-use Assetic\Cache\CacheInterface;
+use AssetManager\Asset\AssetCache;
+use AssetManager\Asset\AssetInterface;
+use AssetManager\Cache\CacheInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -42,7 +42,7 @@ class AssetCacheManager
      * Set the cache (if any) on the asset, and return the new AssetCache.
      *
      * @param string         $path  Path to asset
-     * @param AssetInterface $asset Assetic Asset Interface
+     * @param AssetInterface $asset AssetManager Asset Interface
      *
      * @return  AssetCache
      */
@@ -139,10 +139,10 @@ class AssetCacheManager
 
         switch ($classToCheck) {
             case 'ApcCache':
-                $class = 'Assetic\Cache\ApcCache';
+                $class = 'AssetManager\Cache\ApcCache';
                 break;
             case 'FilesystemCache':
-                $class = 'Assetic\Cache\FilesystemCache';
+                $class = 'AssetManager\Cache\FilesystemCache';
                 break;
             case 'FilePathCache':
                 $class = 'AssetManager\Cache\FilePathCache';

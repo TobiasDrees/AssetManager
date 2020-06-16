@@ -2,7 +2,7 @@
 
 namespace AssetManagerTest\Service;
 
-use Assetic\Asset;
+use AssetManager\Asset;
 use AssetManager\Resolver\AliasPathStackResolver;
 use AssetManager\Service\MimeResolver;
 use PHPUnit\Framework\TestCase;

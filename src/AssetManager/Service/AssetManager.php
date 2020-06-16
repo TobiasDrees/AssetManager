@@ -2,7 +2,7 @@
 
 namespace AssetManager\Service;
 
-use Assetic\Asset\AssetInterface;
+use AssetManager\Asset\AssetInterface;
 use AssetManager\Exception;
 use AssetManager\Resolver\ResolverInterface;
 use Laminas\Http\PhpEnvironment\Request;

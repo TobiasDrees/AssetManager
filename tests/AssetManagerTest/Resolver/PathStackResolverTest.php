@@ -3,7 +3,7 @@
 namespace AssetManagerTest\Service;
 
 use ArrayObject;
-use Assetic\Asset;
+use AssetManager\Asset;
 use AssetManager\Exception\InvalidArgumentException;
 use AssetManager\Resolver\MimeResolverAwareInterface;
 use AssetManager\Resolver\PathStackResolver;
