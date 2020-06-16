@@ -81,6 +81,35 @@ class UglifyCssFilter extends BaseNodeFilter
      */
     public function filterDump(AssetInterface $asset)
     {
+        $args = $this->nodeBin
+            ? array($this->nodeBin, $this->uglifycssBin)
+            : array($this->uglifycssBin);
+
+        if ($this->expandVars) {
+            $args[] = '--expand-vars';
+        }
+
+        if ($this->uglyComments) {
+            $args[] = '--ugly-comments';
+        }
+
+        if ($this->cuteComments) {
+            $args[] = '--cute-comments';
+        }
+
+        $args[] = '{INPUT}';
+
+        $process = $this->createProcess($args);
+        $code = $process->run();
+        $asset->setContent($process->getOutput());
+
+        //$result = $this->runProcess($asset->getContent(), $args);
+        //var_dump($result);
+        //$asset->setContent($result);
+
+
+
+        /*
         $pb = $this->createProcessBuilder($this->nodeBin
             ? array($this->nodeBin, $this->uglifycssBin)
             : array($this->uglifycssBin));
@@ -116,5 +145,6 @@ class UglifyCssFilter extends BaseNodeFilter
         }
 
         $asset->setContent($proc->getOutput());
+        */
     }
 }
