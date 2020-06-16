@@ -1,5 +1,5 @@
 {
-    "name": "FabianKoestring/assetmanager",
+    "name": "fabiankoestring/assetmanager",
     "description": "An assetmanager module for Zend Framework 2.",
     "license": "BSD-2-Clause",
     "type": "library",
