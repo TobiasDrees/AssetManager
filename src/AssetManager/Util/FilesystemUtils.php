@@ -72,9 +72,15 @@ class FilesystemUtils
      *
      * @return string The file path
      */
-    public static function createTemporaryFile($prefix)
+    public static function createTemporaryFile($prefix, ?string $contents = null)
     {
-        return tempnam(self::getTemporaryDirectory(), 'assetic_'.$prefix);
+        $tmpFile = tempnam(self::getTemporaryDirectory(), 'assetic_'.$prefix);
+
+        if ($contents !== null) {
+            file_put_contents($tmpFile, $contents);
+        }
+
+        return $tmpFile;
     }
 
     public static function getTemporaryDirectory()

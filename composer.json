@@ -34,8 +34,7 @@
         "zendframework/zend-loader": "^2.5.1",
         "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
         "zendframework/zend-mvc": "^2.7.9 || ^3.0.2",
-        "symfony/process": "^5.1.2",
-        "scssphp/scssphp": "^1.1.1"
+        "symfony/process": "^5.1.2"
     },
     "require-dev": {
         "zendframework/zend-http": "^2.5.4",

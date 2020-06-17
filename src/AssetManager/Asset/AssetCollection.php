@@ -150,7 +150,6 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
         foreach ($this as $asset) {
             $parts[] = $asset->dump($additionalFilter);
         }
-
         return implode("\n", $parts);
     }
 
