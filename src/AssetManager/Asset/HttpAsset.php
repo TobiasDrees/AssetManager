@@ -1,18 +1,9 @@
 <?php
 
-/*
- * This file is part of the Assetic package, an OpenSky project.
- *
- * (c) 2010-2014 OpenSky Project Inc
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AssetManager\Asset;
 
-use Assetic\Filter\FilterInterface;
-use Assetic\Util\VarUtils;
+use AssetManager\Filter\FilterInterface;
+use AssetManager\Util\VarUtils;
 
 /**
  * Represents an asset loaded via an HTTP request.
