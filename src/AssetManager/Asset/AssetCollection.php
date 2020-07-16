@@ -1,66 +1,54 @@
 <?php
 
-/*
- * This file is part of the Assetic package, an OpenSky project.
- *
- * (c) 2010-2014 OpenSky Project Inc
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AssetManager\Asset;
 
 use AssetManager\Asset\Iterator\AssetCollectionFilterIterator;
 use AssetManager\Asset\Iterator\AssetCollectionIterator;
 use AssetManager\Filter\FilterCollection;
 use AssetManager\Filter\FilterInterface;
+use InvalidArgumentException;
+use IteratorAggregate;
+use RecursiveIteratorIterator;
+use SplObjectStorage;
 
-/**
- * A collection of assets.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
-class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
+use function array_flip;
+use function array_intersect_key;
+use function count;
+use function implode;
+use function in_array;
+
+class AssetCollection implements IteratorAggregate, AssetCollectionInterface
 {
-    private $assets;
-    private $filters;
-    private $sourceRoot;
+    private array $assets;
+    private FilterCollection $filters;
+    private ?string $sourceRoot;
     private $targetPath;
     private $content;
     private $clones;
-    private $vars;
+    private array $vars;
     private $values;
 
-    /**
-     * Constructor.
-     *
-     * @param array  $assets     Assets for the current collection
-     * @param array  $filters    Filters for the current collection
-     * @param string $sourceRoot The root directory
-     * @param array  $vars
-     */
-    public function __construct($assets = array(), $filters = array(), $sourceRoot = null, array $vars = array())
+    public function __construct(array $assets = [], array $filters = [], ?string $sourceRoot = null, array $vars = [])
     {
-        $this->assets = array();
+        $this->assets = [];
         foreach ($assets as $asset) {
             $this->add($asset);
         }
 
         $this->filters = new FilterCollection($filters);
         $this->sourceRoot = $sourceRoot;
-        $this->clones = new \SplObjectStorage();
+        $this->clones = new SplObjectStorage();
         $this->vars = $vars;
-        $this->values = array();
+        $this->values = [];
     }
 
     public function __clone()
     {
         $this->filters = clone $this->filters;
-        $this->clones = new \SplObjectStorage();
+        $this->clones = new SplObjectStorage();
     }
 
-    public function all()
+    public function all(): array
     {
         return $this->assets;
     }
@@ -70,7 +58,7 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
         $this->assets[] = $asset;
     }
 
-    public function removeLeaf(AssetInterface $needle, $graceful = false)
+    public function removeLeaf(AssetInterface $needle, bool $graceful = false): bool
     {
         foreach ($this->assets as $i => $asset) {
             $clone = isset($this->clones[$asset]) ? $this->clones[$asset] : null;
@@ -89,14 +77,14 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
             return false;
         }
 
-        throw new \InvalidArgumentException('Leaf not found.');
+        throw new InvalidArgumentException('Leaf not found.');
     }
 
-    public function replaceLeaf(AssetInterface $needle, AssetInterface $replacement, $graceful = false)
+    public function replaceLeaf(AssetInterface $needle, AssetInterface $replacement, bool $graceful = false): bool
     {
         foreach ($this->assets as $i => $asset) {
             $clone = isset($this->clones[$asset]) ? $this->clones[$asset] : null;
-            if (in_array($needle, array($asset, $clone), true)) {
+            if (in_array($needle, [$asset, $clone], true)) {
                 unset($this->clones[$asset]);
                 $this->assets[$i] = $replacement;
 
@@ -112,29 +100,29 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
             return false;
         }
 
-        throw new \InvalidArgumentException('Leaf not found.');
+        throw new InvalidArgumentException('Leaf not found.');
     }
 
-    public function ensureFilter(FilterInterface $filter)
+    public function ensureFilter(FilterInterface $filter): void
     {
         $this->filters->ensure($filter);
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters->all();
     }
 
-    public function clearFilters()
+    public function clearFilters(): void
     {
         $this->filters->clear();
-        $this->clones = new \SplObjectStorage();
+        $this->clones = new SplObjectStorage();
     }
 
-    public function load(FilterInterface $additionalFilter = null)
+    public function load(?FilterInterface $additionalFilter = null): void
     {
         // loop through leaves and load each asset
-        $parts = array();
+        $parts = [];
         foreach ($this as $asset) {
             $asset->load($additionalFilter);
             $parts[] = $asset->getContent();
@@ -143,45 +131,47 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
         $this->content = implode("\n", $parts);
     }
 
-    public function dump(FilterInterface $additionalFilter = null)
+    public function dump(?FilterInterface $additionalFilter = null): string
     {
         // loop through leaves and dump each asset
-        $parts = array();
+        $parts = [];
         foreach ($this as $asset) {
             $parts[] = $asset->dump($additionalFilter);
         }
         return implode("\n", $parts);
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    public function setContent($content)
+    public function setContent(string $content): void
     {
         $this->content = $content;
     }
 
-    public function getSourceRoot()
+    public function getSourceRoot(): ?string
     {
         return $this->sourceRoot;
     }
 
-    public function getSourcePath()
+    public function getSourcePath(): ?string
     {
+        return null;
     }
 
-    public function getSourceDirectory()
+    public function getSourceDirectory(): ?string
     {
+        return null;
     }
 
-    public function getTargetPath()
+    public function getTargetPath(): ?string
     {
         return $this->targetPath;
     }
 
-    public function setTargetPath($targetPath)
+    public function setTargetPath(string $targetPath)
     {
         $this->targetPath = $targetPath;
     }
@@ -191,10 +181,10 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
      *
      * @return integer|null A UNIX timestamp
      */
-    public function getLastModified()
+    public function getLastModified(): ?int
     {
-        if (!count($this->assets)) {
-            return;
+        if (! count($this->assets)) {
+            return null;
         }
 
         $mtime = 0;
@@ -213,15 +203,19 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
      */
     public function getIterator()
     {
-        return new \RecursiveIteratorIterator(new AssetCollectionFilterIterator(new AssetCollectionIterator($this, $this->clones)));
+        return new RecursiveIteratorIterator(
+            new AssetCollectionFilterIterator(
+                new AssetCollectionIterator($this, $this->clones)
+            )
+        );
     }
 
-    public function getVars()
+    public function getVars(): array
     {
         return $this->vars;
     }
 
-    public function setValues(array $values)
+    public function setValues(array $values): void
     {
         $this->values = $values;
 
@@ -230,7 +224,7 @@ class AssetCollection implements \IteratorAggregate, AssetCollectionInterface
         }
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }

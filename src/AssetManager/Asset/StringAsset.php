@@ -1,54 +1,36 @@
 <?php
 
-/*
- * This file is part of the Assetic package, an OpenSky project.
- *
- * (c) 2010-2014 OpenSky Project Inc
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AssetManager\Asset;
 
 use AssetManager\Filter\FilterInterface;
 
-/**
- * Represents a string asset.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
 class StringAsset extends BaseAsset
 {
-    private $string;
-    private $lastModified;
+    private string $string;
+    private int $lastModified;
 
-    /**
-     * Constructor.
-     *
-     * @param string $content    The content of the asset
-     * @param array  $filters    Filters for the asset
-     * @param string $sourceRoot The source asset root directory
-     * @param string $sourcePath The source asset path
-     */
-    public function __construct($content, $filters = array(), $sourceRoot = null, $sourcePath = null)
-    {
+    public function __construct(
+        string $content,
+        array $filters = [],
+        ?string $sourceRoot = null,
+        ?string $sourcePath = null
+    ) {
         $this->string = $content;
 
         parent::__construct($filters, $sourceRoot, $sourcePath);
     }
 
-    public function load(FilterInterface $additionalFilter = null)
+    public function load(?FilterInterface $additionalFilter = null): void
     {
         $this->doLoad($this->string, $additionalFilter);
     }
 
-    public function setLastModified($lastModified)
+    public function setLastModified(int $lastModified)
     {
         $this->lastModified = $lastModified;
     }
 
-    public function getLastModified()
+    public function getLastModified(): int
     {
         return $this->lastModified;
     }

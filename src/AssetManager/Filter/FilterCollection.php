@@ -1,28 +1,19 @@
 <?php
 
-/*
- * This file is part of the Assetic package, an OpenSky project.
- *
- * (c) 2010-2014 OpenSky Project Inc
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AssetManager\Filter;
 
+use ArrayIterator;
 use AssetManager\Asset\AssetInterface;
+use Traversable;
 
-/**
- * A collection of filters.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
+use function count;
+use function in_array;
+
 class FilterCollection implements FilterInterface, \IteratorAggregate, \Countable
 {
-    private $filters = array();
+    private array $filters = [];
 
-    public function __construct($filters = array())
+    public function __construct(array $filters = [])
     {
         foreach ($filters as $filter) {
             $this->ensure($filter);
@@ -37,23 +28,23 @@ class FilterCollection implements FilterInterface, \IteratorAggregate, \Countabl
      */
     public function ensure(FilterInterface $filter)
     {
-        if ($filter instanceof \Traversable) {
+        if ($filter instanceof Traversable) {
             foreach ($filter as $f) {
                 $this->ensure($f);
             }
-        } elseif (!in_array($filter, $this->filters, true)) {
+        } elseif (! in_array($filter, $this->filters, true)) {
             $this->filters[] = $filter;
         }
     }
 
-    public function all()
+    public function all(): array
     {
         return $this->filters;
     }
 
     public function clear()
     {
-        $this->filters = array();
+        $this->filters = [];
     }
 
     public function filterLoad(AssetInterface $asset)
@@ -72,7 +63,7 @@ class FilterCollection implements FilterInterface, \IteratorAggregate, \Countabl
 
     public function getIterator()
     {
-        return new \ArrayIterator($this->filters);
+        return new ArrayIterator($this->filters);
     }
 
     public function count()

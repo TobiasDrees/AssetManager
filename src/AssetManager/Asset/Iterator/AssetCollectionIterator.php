@@ -1,26 +1,9 @@
 <?php
 
-/*
- * This file is part of the Assetic package, an OpenSky project.
- *
- * (c) 2010-2014 OpenSky Project Inc
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace AssetManager\Asset\Iterator;
 
 use AssetManager\Asset\AssetCollectionInterface;
 
-/**
- * Iterates over an asset collection.
- *
- * The iterator is responsible for cascading filters and target URL patterns
- * from parent to child assets.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
 class AssetCollectionIterator implements \RecursiveIterator
 {
     private $assets;
@@ -51,7 +34,7 @@ class AssetCollectionIterator implements \RecursiveIterator
      *
      * @return \Assetic\Asset\AssetInterface
      */
-    public function current($raw = false)
+    public function current(bool $raw = false)
     {
         $asset = current($this->assets);
 
@@ -96,7 +79,7 @@ class AssetCollectionIterator implements \RecursiveIterator
         return reset($this->assets);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return false !== current($this->assets);
     }
@@ -106,15 +89,12 @@ class AssetCollectionIterator implements \RecursiveIterator
         return current($this->assets) instanceof AssetCollectionInterface;
     }
 
-    /**
-     * @uses current()
-     */
-    public function getChildren()
+    public function getChildren(): self
     {
         return new self($this->current(), $this->clones);
     }
 
-    private function removeDuplicateVar($name)
+    private function removeDuplicateVar(string $name): string
     {
         foreach ($this->vars as $var) {
             $var = '{'.$var.'}';

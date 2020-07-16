@@ -14,14 +14,9 @@ namespace AssetManager\Asset;
 use AssetManager\Filter\FilterCollection;
 use AssetManager\Filter\FilterInterface;
 
-/**
- * A base abstract asset.
- *
- * The methods load() and getLastModified() are left undefined, although a
- * reusable doLoad() method is available to child classes.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
+use function in_array;
+use function sprintf;
+
 abstract class BaseAsset implements AssetInterface
 {
     private $filters;
@@ -37,10 +32,10 @@ abstract class BaseAsset implements AssetInterface
     /**
      * Constructor.
      *
-     * @param array  $filters    Filters for the asset
+     * @param array $filters Filters for the asset
      * @param string $sourceRoot The root directory
      * @param string $sourcePath The asset path
-     * @param array  $vars
+     * @param array $vars
      */
     public function __construct($filters = array(), $sourceRoot = null, $sourcePath = null, array $vars = array())
     {
@@ -60,17 +55,17 @@ abstract class BaseAsset implements AssetInterface
         $this->filters = clone $this->filters;
     }
 
-    public function ensureFilter(FilterInterface $filter)
+    public function ensureFilter(FilterInterface $filter): void
     {
         $this->filters->ensure($filter);
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters->all();
     }
 
-    public function clearFilters()
+    public function clearFilters(): void
     {
         $this->filters->clear();
     }
@@ -78,7 +73,7 @@ abstract class BaseAsset implements AssetInterface
     /**
      * Encapsulates asset loading logic.
      *
-     * @param string          $content          The asset content
+     * @param string $content The asset content
      * @param FilterInterface $additionalFilter An additional filter
      */
     protected function doLoad($content, FilterInterface $additionalFilter = null)
@@ -97,9 +92,9 @@ abstract class BaseAsset implements AssetInterface
         $this->loaded = true;
     }
 
-    public function dump(FilterInterface $additionalFilter = null)
+    public function dump(?FilterInterface $additionalFilter = null): string
     {
-        if (!$this->loaded) {
+        if (! $this->loaded) {
             $this->load();
         }
 
@@ -114,42 +109,48 @@ abstract class BaseAsset implements AssetInterface
         return $asset->getContent();
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    public function setContent($content)
+    public function setContent(string $content): void
     {
         $this->content = $content;
     }
 
-    public function getSourceRoot()
+    public function getSourceRoot(): ?string
     {
         return $this->sourceRoot;
     }
 
-    public function getSourcePath()
+    public function getSourcePath(): ?string
     {
         return $this->sourcePath;
     }
 
-    public function getSourceDirectory()
+    public function getSourceDirectory(): ?string
     {
         return $this->sourceDir;
     }
 
-    public function getTargetPath()
+    public function getTargetPath(): ?string
     {
         return $this->targetPath;
     }
 
-    public function setTargetPath($targetPath)
+    public function setTargetPath(string $targetPath)
     {
         if ($this->vars) {
             foreach ($this->vars as $var) {
                 if (false === strpos($targetPath, $var)) {
-                    throw new \RuntimeException(sprintf('The asset target path "%s" must contain the variable "{%s}".', $targetPath, $var));
+                    throw new \RuntimeException(
+                        sprintf(
+                            'The asset target path "%s" must contain the variable "{%s}".',
+                            $targetPath,
+                            $var
+                        )
+                    );
                 }
             }
         }
@@ -157,7 +158,7 @@ abstract class BaseAsset implements AssetInterface
         $this->targetPath = $targetPath;
     }
 
-    public function getVars()
+    public function getVars(): array
     {
         return $this->vars;
     }
@@ -165,8 +166,14 @@ abstract class BaseAsset implements AssetInterface
     public function setValues(array $values)
     {
         foreach ($values as $var => $v) {
-            if (!in_array($var, $this->vars, true)) {
-                throw new \InvalidArgumentException(sprintf('The asset with source path "%s" has no variable named "%s".', $this->sourcePath, $var));
+            if (! in_array($var, $this->vars, true)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'The asset with source path "%s" has no variable named "%s".',
+                        $this->sourcePath,
+                        $var
+                    )
+                );
             }
         }
 
@@ -174,7 +181,7 @@ abstract class BaseAsset implements AssetInterface
         $this->loaded = false;
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }

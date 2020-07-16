@@ -5,65 +5,42 @@ namespace AssetManager\Cache;
 use AssetManager\Exception\RuntimeException;
 use Laminas\Stdlib\ErrorHandler;
 
-/**
- * A file path cache. Same as FilesystemCache, except for the fact that this will create the
- * directories recursively, in stead of using a hash.
- */
+use function file_exists;
+use function file_get_contents;
+use function mkdir;
+use function pathInfo;
+use function umask;
+
 class FilePathCache implements CacheInterface
 {
-    /**
-     * @var string Holds the cache directory.
-     */
-    protected $dir;
+    protected string $dir;
+    protected string $filename;
+    protected ?string $cachedFile;
 
-    /**
-     * @var string The filename we'll be caching for.
-     */
-    protected $filename;
-
-    /**
-     * @var string Holds the cachedFile string
-     */
-    protected $cachedFile;
-
-    /**
-     * Constructor
-     *
-     * @param string $dir       The directory to cache in
-     * @param string $filename  The filename we'll be caching for.
-     */
-    public function __construct($dir, $filename)
+    public function __construct(string $dir, string $filename)
     {
-        $this->dir      = $dir;
+        $this->dir = $dir;
         $this->filename = $filename;
+        $this->cachedFile = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function has($key)
+    public function has(string $key): bool
     {
         return file_exists($this->cachedFile());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function get($key)
+    public function get(string $key): ?string
     {
         $path = $this->cachedFile();
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             throw new RuntimeException('There is no cached value for ' . $this->filename);
         }
 
         return file_get_contents($path);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function set($key, $value)
+    public function set(string $key, string $value): void
     {
         $pathInfo = pathInfo($this->cachedFile());
         $cacheDir = $pathInfo['dirname'];
@@ -71,7 +48,7 @@ class FilePathCache implements CacheInterface
 
         ErrorHandler::start();
 
-        if (!is_dir($cacheDir)) {
+        if (! is_dir($cacheDir)) {
             $umask = umask(0);
             mkdir($cacheDir, 0777, true);
             umask($umask);
@@ -82,7 +59,7 @@ class FilePathCache implements CacheInterface
 
         ErrorHandler::stop();
 
-        if (!is_writable($cacheDir)) {
+        if (! is_writable($cacheDir)) {
             throw new RuntimeException('Unable to write file ' . $this->cachedFile());
         }
 
@@ -96,10 +73,8 @@ class FilePathCache implements CacheInterface
         rename($tmpFilePath, $this->cachedFile());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function remove($key)
+    // @todo Return?
+    public function remove(string $key): bool
     {
         ErrorHandler::start(\E_WARNING);
 
@@ -114,11 +89,7 @@ class FilePathCache implements CacheInterface
         return $success;
     }
 
-    /**
-     * Get the path-to-file.
-     * @return string Cache path
-     */
-    protected function cachedFile()
+    protected function cachedFile(): string
     {
         if (null === $this->cachedFile) {
             $this->cachedFile = rtrim($this->dir, '/') . '/' . ltrim($this->filename, '/');
