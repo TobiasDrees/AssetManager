@@ -4,26 +4,17 @@ namespace AssetManager\Asset;
 
 use AssetManager\Filter\FilterInterface;
 use AssetManager\Util\VarUtils;
+use RecursiveIteratorIterator;
 
-/**
- * A collection of assets loaded by glob.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
+use function glob;
+use function is_file;
+
 class GlobAsset extends AssetCollection
 {
-    private $globs;
-    private $initialized;
+    private array $globs;
+    private bool $initialized;
 
-    /**
-     * Constructor.
-     *
-     * @param string|array $globs   A single glob path or array of paths
-     * @param array        $filters An array of filters
-     * @param string       $root    The root directory
-     * @param array        $vars
-     */
-    public function __construct($globs, $filters = [], $root = null, array $vars = [])
+    public function __construct(array $globs, array $filters = [], ?string $root = null, array $vars = [])
     {
         $this->globs = (array) $globs;
         $this->initialized = false;
@@ -31,52 +22,52 @@ class GlobAsset extends AssetCollection
         parent::__construct([], $filters, $root, $vars);
     }
 
-    public function all()
+    public function all(): array
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
         return parent::all();
     }
 
-    public function load(FilterInterface $additionalFilter = null)
+    public function load(?FilterInterface $additionalFilter = null): void
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
         parent::load($additionalFilter);
     }
 
-    public function dump(FilterInterface $additionalFilter = null)
+    public function dump(?FilterInterface $additionalFilter = null): string
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
         return parent::dump($additionalFilter);
     }
 
-    public function getLastModified()
+    public function getLastModified(): ?int
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
         return parent::getLastModified();
     }
 
-    public function getIterator()
+    public function getIterator(): RecursiveIteratorIterator
     {
-        if (!$this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
         return parent::getIterator();
     }
 
-    public function setValues(array $values)
+    public function setValues(array $values): void
     {
         parent::setValues($values);
         $this->initialized = false;
