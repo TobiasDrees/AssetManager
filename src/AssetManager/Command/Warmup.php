@@ -1,27 +1,16 @@
 <?php
 
-namespace AssetManager\Controller;
+namespace AssetManager\Command;
 
 use AssetManager\Service\AssetManager;
-use Laminas\Console\Adapter\AdapterInterface as Console;
-use Laminas\Console\Request as ConsoleRequest;
-use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Stdlib\RequestInterface;
-use Laminas\Stdlib\ResponseInterface;
+use Laminas\Cli\Command\AbstractParamAwareCommand;
+use Laminas\Cli\Input\ParamAwareInputInterface;
+use Laminas\Cli\Input\StringParam;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class ConsoleController
- *
- * @package AssetManager\Controller
- */
-class ConsoleController extends AbstractActionController
+class Warmup extends AbstractParamAwareCommand
 {
-
-    /**
-     * @var \Laminas\Console\Adapter\AdapterInterface console object
-     */
-    protected $console;
-
     /**
      * @var \AssetManager\Service\AssetManager asset manager object
      */
@@ -32,42 +21,36 @@ class ConsoleController extends AbstractActionController
      */
     protected $appConfig;
 
-    /**
-     * @param Console $console
-     * @param AssetManager $assetManager
-     * @param array $appConfig
-     */
-    public function __construct(Console $console, AssetManager $assetManager, array $appConfig)
+    public function __construct(AssetManager $assetManager, array $appConfig)
     {
-        $this->console      = $console;
+        parent::__construct();
         $this->assetManager = $assetManager;
         $this->appConfig    = $appConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return mixed|ResponseInterface
-     * @throws \RuntimeException
-     */
-    public function dispatch(RequestInterface $request, ResponseInterface $response = null)
+    protected function configure()
     {
-        if (!($request instanceof ConsoleRequest)) {
-            throw new \RuntimeException('You can use this controller only from a console!');
-        }
-
-        return parent::dispatch($request, $response);
+        $this->setName(self::$defaultName);
+        $this->addParam(
+            (new StringParam('purge'))
+        );
+        $this->addParam(
+            (new StringParam('verbose'))
+                ->setShortcut('v')
+        );
     }
 
     /**
-     * Dumps all assets to cache directories.
+     * @param ParamAwareInputInterface $input
      */
-    public function warmupAction()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $request    = $this->getRequest();
-        $purge      = $request->getParam('purge', false);
-        $verbose    = $request->getParam('verbose', false) || $request->getParam('v', false);
+        $purge      = $input->hasParameterOption('purge');
+        $verbose    = $input->hasParameterOption('verbose') || $input->hasParameterOption('v');
+
+        var_dump($purge);
+        var_dump($verbose);
+        die();
 
         // purge cache for every configuration
         if ($purge) {
@@ -86,6 +69,7 @@ class ConsoleController extends AbstractActionController
         }
 
         $this->output(sprintf('Warming up finished...', $verbose));
+        return AbstractParamAwareCommand::SUCCESS;
     }
 
     /**

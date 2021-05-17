@@ -1,6 +1,6 @@
 <?php
 
-namespace AssetManager\Controller;
+namespace AssetManager\Command;
 
 use AssetManager\Service\AssetManager;
 use Interop\Container\ContainerInterface;
@@ -8,18 +8,17 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
-class ConsoleControllerFactory implements FactoryInterface
+class WarmupFactory implements FactoryInterface
 {
     /**
      * @inheritDoc
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $console        = $container->get('console');
         $assetManager   = $container->get(AssetManager::class);
         $appConfig      = $container->get('config');
 
-        return new ConsoleController($console, $assetManager, $appConfig);
+        return new Warmup($assetManager, $appConfig);
     }
 
     /**
@@ -30,6 +29,6 @@ class ConsoleControllerFactory implements FactoryInterface
         if ($serviceLocator instanceof AbstractPluginManager) {
             $serviceLocator = $serviceLocator->getServiceLocator() ?: $serviceLocator;
         }
-        return $this($serviceLocator, ConsoleController::class);
+        return $this($serviceLocator, Warmup::class);
     }
 }

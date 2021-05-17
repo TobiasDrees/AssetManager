@@ -3,6 +3,7 @@
 return [
     'service_manager' => [
         'factories' => [
+            AssetManager\Command\Warmup::class => AssetManager\Command\WarmupFactory::class,
             AssetManager\Service\AssetManager::class => AssetManager\Service\AssetManagerServiceFactory::class,
             AssetManager\Service\AssetFilterManager::class => AssetManager\Service\AssetFilterManagerServiceFactory::class,
             AssetManager\Service\AssetCacheManager::class => AssetManager\Service\AssetCacheManagerServiceFactory::class,
@@ -20,7 +21,8 @@ return [
         'aliases' => [
             //Alias left here for BC
             'mime_resolver' => AssetManager\Service\MimeResolver::class,
-            'AssetManager\Service\AggregateResolver' => AssetManager\Resolver\AggregateResolver::class
+            'AssetManager\Service\AggregateResolver' => AssetManager\Resolver\AggregateResolver::class,
+            'AssetManager\Controller\Console' => AssetManager\Command\Warmup::class,
         ],
     ],
     'asset_manager' => [
@@ -39,11 +41,6 @@ return [
             'cache' => null,
         ],
     ],
-    'controllers' => [
-        'factories' => [
-            'AssetManager\Controller\Console' => AssetManager\Controller\ConsoleControllerFactory::class,
-        ],
-    ],
     'view_helpers' => [
         'factories' => [
             AssetManager\View\Helper\Asset::class => AssetManager\Service\AssetViewHelperFactory::class
@@ -52,19 +49,9 @@ return [
             'asset' => AssetManager\View\Helper\Asset::class
         ]
     ],
-    'console' => [
-        'router' => [
-            'routes' => [
-                'AssetManager-warmup' => [
-                    'options' => [
-                        'route' => 'assetmanager warmup [--purge] [--verbose|-v]',
-                        'defaults' => [
-                            'controller' => 'AssetManager\Controller\Console',
-                            'action' => 'warmup',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
+    'laminas-cli' => [
+        'command' => [
+            'assetmanager warmup' => AssetManager\Command\Warmup::class,
+        ]
+    ]
 ];
