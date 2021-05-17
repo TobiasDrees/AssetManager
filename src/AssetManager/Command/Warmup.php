@@ -48,19 +48,15 @@ class Warmup extends AbstractParamAwareCommand
         $purge      = $input->hasParameterOption('purge');
         $verbose    = $input->hasParameterOption('verbose') || $input->hasParameterOption('v');
 
-        var_dump($purge);
-        var_dump($verbose);
-        die();
-
         // purge cache for every configuration
         if ($purge) {
-            $this->purgeCache($verbose);
+            $this->purgeCache($output, $verbose);
         }
 
-        $this->output('Collecting all assets...', $verbose);
+        $this->output('Collecting all assets...', $output, $verbose);
 
         $collection = $this->assetManager->getResolver()->collect();
-        $this->output(sprintf('Collected %d assets, warming up...', count($collection)), $verbose);
+        $this->output(sprintf('Collected %d assets, warming up...', count($collection)), $output, $verbose);
 
         foreach ($collection as $path) {
             $asset = $this->assetManager->getResolver()->resolve($path);
@@ -68,7 +64,7 @@ class Warmup extends AbstractParamAwareCommand
             $this->assetManager->getAssetCacheManager()->setCache($path, $asset)->dump();
         }
 
-        $this->output(sprintf('Warming up finished...', $verbose));
+        $this->output('Warming up finished...', $output, $verbose);
         return AbstractParamAwareCommand::SUCCESS;
     }
 
@@ -77,7 +73,7 @@ class Warmup extends AbstractParamAwareCommand
      * @param bool $verbose verbose flag, default false
      * @return bool false if caching is not set, otherwise true
      */
-    protected function purgeCache($verbose = false)
+    protected function purgeCache(OutputInterface $output, $verbose = false)
     {
 
         if (empty($this->appConfig['asset_manager']['caching'])) {
@@ -89,7 +85,7 @@ class Warmup extends AbstractParamAwareCommand
             if (empty($config['options']['dir'])) {
                 continue;
             }
-            $this->output(sprintf('Purging %s on "%s"...', $config['options']['dir'], $configName), $verbose);
+            $this->output(sprintf('Purging %s on "%s"...', $config['options']['dir'], $configName), $output, $verbose);
 
             $node = $config['options']['dir'];
 
@@ -97,7 +93,7 @@ class Warmup extends AbstractParamAwareCommand
                 $node .= '/'.$configName;
             }
 
-            $this->recursiveRemove($node, $verbose);
+            $this->recursiveRemove($node, $output, $verbose);
         }
 
         return true;
@@ -108,7 +104,7 @@ class Warmup extends AbstractParamAwareCommand
      * @param string $node - uri of node that should be removed from filesystem
      * @param bool $verbose verbose flag, default false
      */
-    protected function recursiveRemove($node, $verbose = false)
+    protected function recursiveRemove($node, OutputInterface $output, $verbose = false)
     {
         if (is_dir($node)) {
             $objects = scandir($node);
@@ -117,10 +113,10 @@ class Warmup extends AbstractParamAwareCommand
                 if ($object === '.' || $object === '..') {
                     continue;
                 }
-                $this->recursiveRemove($node . '/' . $object);
+                $this->recursiveRemove($node . '/' . $object, $output);
             }
         } elseif (is_file($node)) {
-            $this->output(sprintf("unlinking %s...", $node), $verbose);
+            $this->output(sprintf("unlinking %s...", $node), $output, $verbose);
             unlink($node);
         }
     }
@@ -130,10 +126,10 @@ class Warmup extends AbstractParamAwareCommand
      * @param $line
      * @param bool $verbose verbose flag, default true
      */
-    protected function output($line, $verbose = true)
+    protected function output($line, OutputInterface $output, $verbose = true)
     {
         if ($verbose) {
-            $this->console->writeLine($line);
+            $output->writeln($line);
         }
     }
 }
